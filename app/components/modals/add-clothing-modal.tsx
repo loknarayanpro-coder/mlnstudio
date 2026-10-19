@@ -185,24 +185,9 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
     setStudioStatusMessage("Applying MLN studio lighting & isolating garment...");
 
     try {
-      // 1. High-end steamed & ironed studio photography
-      const isShirtOrTop = /pattern|mosaic|khaki|bohemian|print|shirt|top|vintage|casual/i.test(
-        `${name} ${features?.suggestedName || ""} ${f?.name || ""} ${category} ${subcategory}`
-      ) || category === "Tops";
-
-      if (isShirtOrTop) {
-        setProcessedUrl("/samples/patterned-khaki-shirt-studio.jpg");
-        setThumbnailUrl("/samples/patterned-khaki-shirt-studio.jpg");
-        setStudioProvider("MLN Steamed Couture Studio AI");
-        setFidelityNote("Fabric professionally steamed, wrinkles ironed out, symmetrically flat-laid on seamless pure studio background with zero clutter.");
-        setViewMode("processed");
-        return;
-      }
-
-      // 2. High-end studio composite (hand & hanger cropped out, studio spotlight & shadow)
+      // Dynamic High-end studio composite for this specific garment (hands & background isolated, studio lighting & soft shadow)
       const studioRes = await composeStudioGarment({
         dataUrlOrImg: sourceUrl,
-        box_2d: [175, 140, 940, 860],
         preferredBackground
       });
 

@@ -267,16 +267,7 @@ Return ONLY a valid JSON object matching this schema:
           dominantHex: parsed.dominantHex || "#81766E"
         };
 
-        let studioImageUrl = rawDataUrl;
-        try {
-          const fs = await import("fs");
-          const path = await import("path");
-          const samplePath = path.join(process.cwd(), "public", "samples", "patterned-khaki-shirt-studio.jpg");
-          if (fs.existsSync(samplePath)) {
-            const buf = fs.readFileSync(samplePath);
-            studioImageUrl = `data:image/jpeg;base64,${buf.toString("base64")}`;
-          }
-        } catch {}
+        const studioImageUrl = rawDataUrl;
 
         return {
           success: true,
