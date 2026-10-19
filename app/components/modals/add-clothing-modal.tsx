@@ -87,6 +87,44 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
 
   if (!isOpen) return null;
 
+  const fileToPersistentDataUrl = (f: File): Promise<string> => {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const raw = (e.target?.result as string) || "";
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 1200;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, w, h);
+              resolve(canvas.toDataURL("image/jpeg", 0.88));
+              return;
+            }
+          }
+          resolve(raw);
+        };
+        img.onerror = () => resolve(raw);
+        img.src = raw;
+      };
+      reader.onerror = () => resolve("");
+      reader.readAsDataURL(f);
+    });
+  };
+
   const handleFileChange = async (selected: File) => {
     setErrorMessage("");
     const validation = validateClothingImage({ type: selected.type, size: selected.size });
@@ -96,14 +134,17 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
     }
 
     setFile(selected);
-    const objectUrl = URL.createObjectURL(selected);
-    setOriginalUrl(objectUrl);
-    setViewMode("original"); // Show original initially
 
-    // 1. Immediately extract real garment pixel colors, patterns, and attributes from the image
+    // 1. Immediately create persistent Data URL so image loads in 0ms and never dies on reload
+    const persistentUrl = await fileToPersistentDataUrl(selected);
+    setOriginalUrl(persistentUrl);
+    setProcessedUrl(persistentUrl);
+    setViewMode("original");
+
+    // 2. Extract garment pixel colors and details immediately
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.onload = async () => {
+    img.onload = () => {
       try {
         const features = extractGarmentFeaturesFromImage(img, selected.name);
         setName(features.suggestedName);
@@ -117,17 +158,16 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
         setSelectedSeasons(features.seasons);
         setAnalysisConfidence(features.confidence);
 
-        // Run studio image transformation automatically
-        await createStudioImage(objectUrl, selected, features);
-        // Run API vision analysis
+        // Run non-blocking studio enhancements in background
+        createStudioImage(persistentUrl, selected, features);
         runAiAnalysis(selected, features);
       } catch (err) {
         console.warn("Visual feature extraction failed:", err);
-        await createStudioImage(objectUrl, selected);
+        createStudioImage(persistentUrl, selected);
         runAiAnalysis(selected);
       }
     };
-    img.src = objectUrl;
+    img.src = persistentUrl;
   };
 
   /**
@@ -284,13 +324,16 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
 
     if (file) {
       try {
-        const uploadedUrl = await uploadWardrobeImage(file, `${name.trim()}`);
+        const uploadedUrl = await Promise.race([
+          uploadWardrobeImage(file, `${name.trim()}`),
+          new Promise<null>(resolve => setTimeout(() => resolve(null), 2500))
+        ]);
         if (uploadedUrl) {
           finalPrimaryImage = uploadedUrl;
           finalProcessed = uploadedUrl;
         }
       } catch (err) {
-        console.warn("Storage upload failed, falling back to local image:", err);
+        console.warn("Storage upload timed out/failed, falling back to local persistent image:", err);
       }
     }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { WardrobeItem, MainCategory } from "../../../lib/types/wardrobe";
 
 export function GarmentIllustration({
@@ -12,6 +12,8 @@ export function GarmentIllustration({
   large?: boolean;
   className?: string;
 }) {
+  const [hasError, setHasError] = useState(false);
+
   // If no item or empty name: render the tailored dark luxury shirt hanging on a hanger!
   if (!item || !item.name) {
     return (
@@ -160,15 +162,17 @@ export function GarmentIllustration({
     );
   }
 
-  const imageSource = item.processedImagePath || item.originalImagePath;
+  const imageSource = !hasError ? (item.thumbnailPath || item.processedImagePath || item.originalImagePath) : null;
 
-  if (imageSource && imageSource.length > 5) {
+  if (imageSource && imageSource.length > 5 && !hasError) {
     return (
       <img
         src={imageSource}
         alt={item.name}
-        className={`object-contain max-h-full max-w-full ${className}`}
-        loading="lazy"
+        className={`object-contain max-h-full max-w-full transition-opacity duration-200 ${className}`}
+        loading="eager"
+        decoding="async"
+        onError={() => setHasError(true)}
       />
     );
   }
