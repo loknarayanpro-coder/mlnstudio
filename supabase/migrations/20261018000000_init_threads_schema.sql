@@ -184,3 +184,25 @@ create policy "Users can view own recommendation events" on public.recommendatio
   for select using (auth.uid() = user_id);
 create policy "Users can insert own recommendation events" on public.recommendation_events
   for insert with check (auth.uid() = user_id);
+
+-- 8. Storage Policies for 'wardrobe-images' Bucket
+-- Allow everyone to view images in wardrobe-images
+create policy "Public image access"
+  on storage.objects for select
+  using (bucket_id = 'wardrobe-images');
+
+-- Allow image uploads into wardrobe-images
+create policy "Allow image uploads"
+  on storage.objects for insert
+  with check (bucket_id = 'wardrobe-images');
+
+-- Allow image updates
+create policy "Allow image updates"
+  on storage.objects for update
+  using (bucket_id = 'wardrobe-images');
+
+-- Allow image deletions
+create policy "Allow image deletions"
+  on storage.objects for delete
+  using (bucket_id = 'wardrobe-images');
+
