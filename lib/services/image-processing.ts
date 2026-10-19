@@ -98,11 +98,11 @@ export async function composeStudioGarment(params: StudioCompositeParams): Promi
   ctx.fillRect(0, 0, targetW, targetH);
 
   // 3. Smart Garment Framing:
-  // Exclude the top 13% (where hands and hangers sit) and outer 6% margins
+  // Exclude the top 20% (where hands, hangers, and hooks sit) and outer 6% margins
   const cropX = Math.round(origW * 0.06);
-  const cropY = Math.round(origH * 0.12);
+  const cropY = Math.round(origH * 0.20);
   const cropW = Math.round(origW * 0.88);
-  const cropH = Math.round(origH * 0.84);
+  const cropH = Math.round(origH * 0.76);
 
   // Scale and center the garment in 900x1200
   const maxStageW = 740;
