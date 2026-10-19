@@ -1,0 +1,355 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #0a0b10;
+  --muted: #4e5262;
+  --paper: #d8dbe5;
+  --sidebar-bg: #d2d5e0;
+  --panel-bg: #ffffff;
+  --panel-border: #b8bcc8;
+  --line: #c2c6d2;
+  --silver-mist: #e2e5ee;
+  --silver-deep: #b8bcc8;
+  --charcoal-black: #0a0b10;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  background: var(--paper);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  touch-action: manipulation;
+  overscroll-behavior-y: none;
+}
+
+.font-gothic {
+  font-family: var(--font-gothic), "Cinzel", Georgia, serif;
+}
+
+.font-editorial {
+  font-family: var(--font-serif-italic), "Cormorant Garamond", Georgia, serif;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+::selection {
+  background: #0a0b10;
+  color: #ffffff;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #d0d4de;
+}
+::-webkit-scrollbar-thumb {
+  background: #9fa4b2;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7a7f8e;
+}
+
+.shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.sidebar {
+  width: 260px;
+  background: #d5d8e2;
+  color: #0a0b10;
+  border-right: 1px solid #b8bcc8;
+}
+
+.main {
+  min-width: 0;
+  flex: 1;
+  background: radial-gradient(circle at 50% 0%, #eaedf5 0%, #d8dbe6 50%, #c9cdd8 100%);
+}
+
+.eyebrow {
+  font-family: var(--font-gothic), serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+.panel {
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  border-radius: 20px;
+}
+
+.navitem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 13px;
+  border-radius: 12px;
+  color: #383c4c;
+  text-align: left;
+  transition: all .15s ease;
+  border: 1px solid transparent;
+  font-family: var(--font-gothic), serif;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.navitem:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #000000;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.navitem.active {
+  background: #0a0b10;
+  color: #ffffff;
+  border-color: #0a0b10;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+}
+
+/* Opulencia Gothic Enamel Button - Jet Black with Fine Border */
+.gothic-enamel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #0a0b10;
+  color: #ffffff;
+  border: 1px solid #1a1c24;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-family: var(--font-gothic), serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all .2s ease;
+}
+
+.gothic-enamel-btn:hover {
+  background: #181a24;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.primary {
+  border-radius: 999px;
+  background: #0a0b10;
+  color: #ffffff;
+  padding: 11px 22px;
+  font-family: var(--font-gothic), serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: all .18s ease;
+  border: 1px solid #1e202c;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.primary:hover {
+  background: #1c1e2a;
+  transform: translateY(-1px);
+}
+
+.secondary {
+  border: 1px solid #b2b6c4;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0a0b10;
+  padding: 9px 18px;
+  font-family: var(--font-gothic), serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: all .15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.secondary:hover {
+  background: #f4f6fa;
+  border-color: #888d9c;
+  color: #000000;
+}
+
+/* Opulencia / Atelier Noire Hero Banner - Antique Silver Mist & Alabaster Stone Contrast */
+.gothic-hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #b8bcc8;
+  background: radial-gradient(circle at 65% 20%, #ffffff 0%, #ebeef5 40%, #d4d8e2 100%);
+  color: #0a0b10;
+  box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.gothic-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 10% 90%, rgba(0, 0, 0, 0.06), transparent 50%);
+  pointer-events: none;
+}
+
+/* Antique Filigree Divider */
+.filigree-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #3e4250;
+  font-size: 11px;
+}
+.filigree-divider::before,
+.filigree-divider::after {
+  content: "";
+  height: 1px;
+  width: 50px;
+  background: linear-gradient(90deg, transparent, rgba(10, 11, 16, 0.35), transparent);
+}
+
+.gothic-card {
+  border: 1px solid #c2c6d2;
+  background: linear-gradient(180deg, #ffffff 0%, #eff2f8 100%);
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+  transition: all .2s ease;
+}
+
+.gothic-card:hover {
+  border-color: #9ea3b2;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.closet-card {
+  overflow: hidden;
+  border: 1px solid #c2c6d2;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  transition: all .2s ease;
+}
+
+.closet-card:hover {
+  border-color: #9a9fae;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+  transform: translateY(-2px);
+}
+
+.closet-photo {
+  display: flex;
+  height: 190px;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, #f7f8fb 0%, #e8ebf2 100%);
+  overflow: hidden;
+  border-bottom: 1px solid #d8dbe4;
+}
+
+.closet-photo img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  padding: 12px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #0a0b10;
+  color: #ffffff;
+  border: 1px solid #1c1e28;
+  padding: 4px 10px;
+  font-family: var(--font-gothic), serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+/* Subtle gothic tribal / silver glow */
+.silver-glow {
+  filter: drop-shadow(0 0 16px rgba(0, 0, 0, 0.25));
+}
+
+/* Horizontal Chip Scroller */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Safe Area Insets for iOS Home Indicator and Notch */
+.safe-pb {
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+}
+
+.safe-pt {
+  padding-top: max(12px, env(safe-area-inset-top, 12px));
+}
+
+.safe-mb {
+  margin-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+}
+
+/* Mobile Bottom Navigation Bar */
+.mobile-bottom-bar {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 45;
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(235, 238, 245, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid #b8bcc8;
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 768px) {
+  .mobile-bottom-bar {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar { width: 76px; padding-left: 10px !important; padding-right: 10px !important; }
+  .brand-name, .nav-label, .sidebar-note, .sidebar-section { display: none; }
+  .navitem { justify-content: center; padding: 12px 4px; }
+}
+
+@media (max-width: 768px) {
+  .sidebar { display: none !important; }
+}
