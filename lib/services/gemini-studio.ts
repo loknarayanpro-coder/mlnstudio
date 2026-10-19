@@ -226,7 +226,7 @@ Return ONLY a valid JSON object matching this schema:
 }`;
 
       const visionResponse = await ai.models.generateContent({
-        model: "gemini-3.8-flash",
+        model: "gemini-3.5-flash-lite",
         contents: [
           {
             role: "user",
