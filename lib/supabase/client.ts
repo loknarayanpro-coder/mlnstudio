@@ -10,9 +10,14 @@ export const isSupabaseConfigured = Boolean(
   supabaseAnonKey.length > 20
 );
 
+let cachedClient: ReturnType<typeof createSupabaseClient> | null = null;
+
 export function getSupabaseClient() {
   if (!isSupabaseConfigured) {
     return null;
   }
-  return createSupabaseClient(supabaseUrl!, supabaseAnonKey!);
+  if (!cachedClient) {
+    cachedClient = createSupabaseClient(supabaseUrl!, supabaseAnonKey!);
+  }
+  return cachedClient;
 }
