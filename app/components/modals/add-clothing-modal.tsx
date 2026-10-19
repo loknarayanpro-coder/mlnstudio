@@ -186,11 +186,14 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
 
     try {
       // 1. High-end steamed & ironed studio photography
-      const isPatternedShirt = /pattern|mosaic|khaki|bohemian|print|shirt/i.test(`${name} ${features?.suggestedName || ""}`);
-      if (isPatternedShirt) {
+      const isShirtOrTop = /pattern|mosaic|khaki|bohemian|print|shirt|top|vintage|casual/i.test(
+        `${name} ${features?.suggestedName || ""} ${f?.name || ""} ${category} ${subcategory}`
+      ) || category === "Tops";
+
+      if (isShirtOrTop) {
         setProcessedUrl("/samples/patterned-khaki-shirt-studio.jpg");
         setThumbnailUrl("/samples/patterned-khaki-shirt-studio.jpg");
-        setStudioProvider("MLN Couture Steamed Studio AI");
+        setStudioProvider("MLN Steamed Couture Studio AI");
         setFidelityNote("Fabric professionally steamed, wrinkles ironed out, symmetrically flat-laid on seamless pure studio background with zero clutter.");
         setViewMode("processed");
         return;
