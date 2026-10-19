@@ -59,6 +59,7 @@ function WardrobeApp() {
     activeTab,
     setActiveTab,
     toggleFavorite,
+    deleteItem,
     bulkDeleteItems,
     resetWardrobe,
     isAuthenticated,
@@ -633,21 +634,34 @@ function WardrobeApp() {
                           {piece.subcategory || piece.category}
                         </span>
 
-                        {/* Favorite button */}
+                        {/* Quick Action buttons */}
                         {!bulkMode && (
-                          <button
-                            onClick={e => {
-                              e.stopPropagation();
-                              toggleFavorite(piece.id);
-                            }}
-                            aria-label="Favorite piece"
-                            className="absolute right-2 top-2 rounded-full border border-[#bcc0ce] bg-white p-1.5 shadow-2xs transition hover:bg-[#0a0b10] hover:text-white active:scale-90"
-                          >
-                            <Heart
-                              size={13}
-                              className={piece.favorite ? "fill-red-600 text-red-600" : "text-[#525666]"}
-                            />
-                          </button>
+                          <div className="absolute right-2 top-2 flex items-center gap-1.5">
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                deleteItem(piece.id);
+                              }}
+                              aria-label="Delete piece"
+                              className="rounded-full border border-rose-300 bg-white/90 p-1.5 shadow-2xs transition hover:bg-rose-950 hover:text-white active:scale-90"
+                              title="Delete piece"
+                            >
+                              <Trash2 size={13} className="text-rose-600" />
+                            </button>
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                toggleFavorite(piece.id);
+                              }}
+                              aria-label="Favorite piece"
+                              className="rounded-full border border-[#bcc0ce] bg-white p-1.5 shadow-2xs transition hover:bg-[#0a0b10] hover:text-white active:scale-90"
+                            >
+                              <Heart
+                                size={13}
+                                className={piece.favorite ? "fill-red-600 text-red-600" : "text-[#525666]"}
+                              />
+                            </button>
+                          </div>
                         )}
                       </div>
 

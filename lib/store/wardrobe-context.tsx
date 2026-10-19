@@ -103,7 +103,17 @@ export function WardrobeProvider({ children }: { children: React.ReactNode }) {
       if (storedItems) {
         try {
           const parsed = JSON.parse(storedItems);
-          setItems(Array.isArray(parsed) ? parsed : []);
+          if (Array.isArray(parsed)) {
+            // Automatically clean out any old pieces saved with dead temporary blob: URLs
+            const cleanItems = parsed.filter(item => {
+              const p = item.originalImagePath || item.thumbnailPath || "";
+              return !p.startsWith("blob:");
+            });
+            setItems(cleanItems);
+            try { localStorage.setItem(STORAGE_KEYS.ITEMS, JSON.stringify(cleanItems)); } catch {}
+          } else {
+            setItems([]);
+          }
         } catch {
           setItems([]);
         }
