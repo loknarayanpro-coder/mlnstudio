@@ -80,6 +80,7 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
   const [selectedOccasions, setSelectedOccasions] = useState<Occasion[]>(["Everyday", "Smart casual"]);
   const [selectedSeasons, setSelectedSeasons] = useState<Season[]>(["All-Season"]);
   const [userNotes, setUserNotes] = useState<string>("");
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -270,8 +271,6 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
       curr.includes(sea) ? curr.filter(s => s !== sea) : [...curr, sea]
     );
   };
-
-  const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
     if (!name.trim()) {
