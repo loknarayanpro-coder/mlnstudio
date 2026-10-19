@@ -138,6 +138,52 @@ export function WardrobeProvider({ children }: { children: React.ReactNode }) {
           // invalid auth payload
         }
       }
+
+      // Supabase initial session check & items sync
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session?.user) {
+            setIsAuthenticated(true);
+            setUserEmail(session.user.email || null);
+            supabase
+              .from("wardrobe_items")
+              .select("*")
+              .order("created_at", { ascending: false })
+              .then(({ data, error }) => {
+                if (!error && data && data.length > 0) {
+                  const dbItems: WardrobeItem[] = data.map((d: any) => ({
+                    id: d.id,
+                    userId: d.user_id,
+                    name: d.name,
+                    category: d.category,
+                    subcategory: d.subcategory,
+                    clothingType: d.clothing_type || `${d.fit || ""} ${d.subcategory || ""}`.trim(),
+                    colorName: d.color_name,
+                    dominantHex: d.dominant_hex,
+                    attributes: {
+                      fit: d.fit || "Regular",
+                      material: d.material || "Cotton",
+                      brand: d.brand,
+                      seasons: d.seasons || ["All-season"],
+                      occasions: d.occasions || ["Casual"],
+                      notes: d.notes
+                    },
+                    originalImagePath: d.original_image_path,
+                    processedImagePath: d.processed_image_path || d.original_image_path,
+                    thumbnailPath: d.thumbnail_path || d.processed_image_path || d.original_image_path,
+                    imageProcessingStatus: d.image_processing_status || "original",
+                    wearCount: d.wear_count || 0,
+                    favorite: !!d.favorite,
+                    createdAt: d.created_at,
+                    updatedAt: d.updated_at
+                  }));
+                  setItems(dbItems);
+                }
+              });
+          }
+        });
+      }
     } catch (e) {
       console.warn("Could not read localStorage cache:", e);
     }
@@ -218,24 +264,79 @@ export function WardrobeProvider({ children }: { children: React.ReactNode }) {
       updatedAt: new Date().toISOString()
     };
     setItems(curr => [newItem, ...curr]);
+
+    // Supabase DB Sync
+    const supabase = getSupabaseClient();
+    if (supabase) {
+      supabase.from("wardrobe_items").insert({
+        id: newItem.id,
+        user_id: profile.id,
+        name: newItem.name,
+        category: newItem.category,
+        subcategory: newItem.subcategory,
+        clothing_type: newItem.clothingType,
+        color_name: newItem.colorName,
+        dominant_hex: newItem.dominantHex,
+        fit: newItem.attributes.fit,
+        material: newItem.attributes.material,
+        brand: newItem.attributes.brand,
+        seasons: newItem.attributes.seasons,
+        occasions: newItem.attributes.occasions,
+        notes: newItem.attributes.notes,
+        original_image_path: newItem.originalImagePath,
+        processed_image_path: newItem.processedImagePath,
+        thumbnail_path: newItem.thumbnailPath,
+        image_processing_status: newItem.imageProcessingStatus,
+        wear_count: newItem.wearCount,
+        favorite: newItem.favorite
+      }).then(({ error }) => {
+        if (error) console.warn("Supabase wardrobe_items insert warning:", error.message);
+      });
+    }
+
     return newItem;
   };
 
   const updateItem = (id: string, updates: Partial<WardrobeItem>) => {
     setItems(curr => curr.map(item => item.id === id ? { ...item, ...updates, updatedAt: new Date().toISOString() } : item));
+    const supabase = getSupabaseClient();
+    if (supabase) {
+      supabase.from("wardrobe_items").update({
+        name: updates.name,
+        favorite: updates.favorite,
+        wear_count: updates.wearCount,
+        updated_at: new Date().toISOString()
+      }).eq("id", id).then();
+    }
   };
 
   const deleteItem = (id: string) => {
     setItems(curr => curr.filter(item => item.id !== id));
+    const supabase = getSupabaseClient();
+    if (supabase) {
+      supabase.from("wardrobe_items").delete().eq("id", id).then(({ error }) => {
+        if (error) console.warn("Supabase wardrobe_items delete warning:", error.message);
+      });
+    }
   };
 
   const bulkDeleteItems = (ids: string[]) => {
     const set = new Set(ids);
     setItems(curr => curr.filter(item => !set.has(item.id)));
+    const supabase = getSupabaseClient();
+    if (supabase) {
+      supabase.from("wardrobe_items").delete().in("id", ids).then();
+    }
   };
 
   const toggleFavorite = (id: string) => {
+    const target = items.find(item => item.id === id);
+    const newFavorite = target ? !target.favorite : true;
     setItems(curr => curr.map(item => item.id === id ? { ...item, favorite: !item.favorite } : item));
+    const supabase = getSupabaseClient();
+    if (supabase) {
+      supabase.from("wardrobe_items").update({ favorite: newFavorite }).eq("id", id).then();
+    }
   };
 
   const markItemWorn = (id: string) => {

@@ -10,6 +10,7 @@ import { MainCategory, SubCategory, Occasion, Season, FitType } from "../../../l
 import { validateClothingImage, processCatalogImage, composeStudioGarment } from "../../../lib/services/image-processing";
 import { COLOR_REGISTRY } from "../../../lib/services/color-harmony";
 import { extractGarmentFeaturesFromImage, ExtractedGarmentFeatures } from "../../../lib/services/client-image-analyzer";
+import { uploadWardrobeImage } from "../../../lib/supabase/storage";
 
 const MAIN_CATEGORIES: MainCategory[] = [
   "Tops",
@@ -270,13 +271,29 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
     );
   };
 
-  const handleSave = () => {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
     if (!name.trim()) {
       setErrorMessage("Please give this piece a name.");
       return;
     }
 
-    const finalPrimaryImage = primaryChoice === "processed" && processedUrl ? processedUrl : originalUrl;
+    setIsSaving(true);
+    let finalPrimaryImage = primaryChoice === "processed" && processedUrl ? processedUrl : originalUrl;
+    let finalProcessed = processedUrl || originalUrl;
+
+    if (file) {
+      try {
+        const uploadedUrl = await uploadWardrobeImage(file, `${name.trim()}`);
+        if (uploadedUrl) {
+          finalPrimaryImage = uploadedUrl;
+          finalProcessed = uploadedUrl;
+        }
+      } catch (err) {
+        console.warn("Storage upload failed, falling back to local image:", err);
+      }
+    }
 
     addItem({
       name: name.trim(),
@@ -293,8 +310,8 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
         occasions: selectedOccasions,
         notes: userNotes.trim() || undefined
       },
-      originalImagePath: originalUrl,
-      processedImagePath: processedUrl || originalUrl,
+      originalImagePath: finalPrimaryImage,
+      processedImagePath: finalProcessed,
       thumbnailPath: finalPrimaryImage,
       imageProcessingStatus: processedUrl ? "processed" : "original",
       aiAnalysisStatus: analysisConfidence ? "completed" : "manual",
@@ -302,6 +319,7 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
       favorite: false
     });
 
+    setIsSaving(false);
     onClose();
     setActiveTab("My wardrobe");
   };
@@ -681,9 +699,18 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
           <button
             type="button"
             onClick={handleSave}
-            className="flex items-center gap-1.5 rounded-full bg-gradient-to-b from-white to-[#c8cbd6] px-6 py-2.5 font-gothic text-xs font-bold tracking-wider text-[#08080b] shadow-[0_0_15px_rgba(255,255,255,0.15)] transition hover:brightness-110 active:scale-[0.99]"
+            disabled={isSaving}
+            className="flex items-center gap-1.5 rounded-full bg-gradient-to-b from-white to-[#c8cbd6] px-6 py-2.5 font-gothic text-xs font-bold tracking-wider text-[#08080b] shadow-[0_0_15px_rgba(255,255,255,0.15)] transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
           >
-            <Check size={14} /> Catalog to Archive
+            {isSaving ? (
+              <>
+                <Wand2 size={14} className="animate-spin text-[#08080b]" /> Saving to Archive...
+              </>
+            ) : (
+              <>
+                <Check size={14} /> Catalog to Archive
+              </>
+            )}
           </button>
         </div>
       </div>
