@@ -167,20 +167,6 @@ export async function composeStudioGarment(params: StudioCompositeParams): Promi
   return { processedUrl, thumbnailUrl };
 }
 
-  // Thumbnail (200x266)
-  const thumbCanvas = document.createElement("canvas");
-  thumbCanvas.width = 200;
-  thumbCanvas.height = 266;
-  const thumbCtx = thumbCanvas.getContext("2d");
-  let thumbnailUrl = processedUrl;
-  if (thumbCtx) {
-    thumbCtx.drawImage(stageCanvas, 0, 0, 200, 266);
-    thumbnailUrl = thumbCanvas.toDataURL("image/webp", 0.9);
-  }
-
-  return { processedUrl, thumbnailUrl };
-}
-
 /**
  * Client/Server Image processing helper
  * Generates clean studio presentation on a neutral #F6F5F0 background,
