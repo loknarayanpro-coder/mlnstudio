@@ -55,9 +55,9 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
   const [originalUrl, setOriginalUrl] = useState<string>("");
   const [processedUrl, setProcessedUrl] = useState<string>("");
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
-  const [viewMode, setViewMode] = useState<"processed" | "original">("processed");
+  const [viewMode, setViewMode] = useState<"processed" | "original">("original");
   const [preferredBackground, setPreferredBackground] = useState<"warm white" | "light gray" | "pure white">("warm white");
-  const [primaryChoice, setPrimaryChoice] = useState<"processed" | "original">("processed");
+  const [primaryChoice, setPrimaryChoice] = useState<"processed" | "original">("original");
 
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isProcessingStudio, setIsProcessingStudio] = useState<boolean>(false);
@@ -353,9 +353,9 @@ export function AddClothingModal({ isOpen, onClose }: { isOpen: boolean; onClose
         notes: userNotes.trim() || undefined
       },
       originalImagePath: finalPrimaryImage,
-      processedImagePath: finalProcessed,
+      processedImagePath: finalPrimaryImage,
       thumbnailPath: finalPrimaryImage,
-      imageProcessingStatus: processedUrl ? "processed" : "original",
+      imageProcessingStatus: "original",
       aiAnalysisStatus: analysisConfidence ? "completed" : "manual",
       aiConfidence: analysisConfidence || undefined,
       favorite: false

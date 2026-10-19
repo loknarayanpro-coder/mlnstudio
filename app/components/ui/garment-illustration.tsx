@@ -162,17 +162,20 @@ export function GarmentIllustration({
     );
   }
 
-  const imageSource = !hasError ? (item.thumbnailPath || item.processedImagePath || item.originalImagePath) : null;
+  // Always display the authentic user uploaded photograph
+  const imageSource =
+    (item.originalImagePath && !item.originalImagePath.startsWith("data:image/svg+xml") ? item.originalImagePath : null) ||
+    (item.thumbnailPath && !item.thumbnailPath.startsWith("data:image/svg+xml") ? item.thumbnailPath : null) ||
+    (item.processedImagePath && !item.processedImagePath.startsWith("data:image/svg+xml") ? item.processedImagePath : null);
 
-  if (imageSource && imageSource.length > 5 && !hasError) {
+  if (imageSource && imageSource.length > 10) {
     return (
       <img
         src={imageSource}
         alt={item.name}
-        className={`object-contain max-h-full max-w-full transition-opacity duration-200 ${className}`}
+        className={`object-contain max-h-full max-w-full drop-shadow-sm transition duration-150 ${className}`}
         loading="eager"
         decoding="async"
-        onError={() => setHasError(true)}
       />
     );
   }

@@ -267,33 +267,7 @@ Return ONLY a valid JSON object matching this schema:
           dominantHex: parsed.dominantHex || "#81766E"
         };
 
-        let studioImageUrl = "";
-
-        // Check if a studio-grade catalog photograph is available for this piece
-        try {
-          const fs = await import("fs");
-          const path = await import("path");
-          const samplePath = path.join(process.cwd(), "public", "samples", "patterned-khaki-shirt-studio.jpg");
-          const isPatternedShirt =
-            (parsed.garmentTitle && /pattern|mottled|mosaic|khaki/i.test(parsed.garmentTitle)) ||
-            (parsed.category === "Tops" && /shirt/i.test(parsed.subcategory || ""));
-
-          if (isPatternedShirt && fs.existsSync(samplePath)) {
-            const buf = fs.readFileSync(samplePath);
-            studioImageUrl = `data:image/jpeg;base64,${buf.toString("base64")}`;
-          }
-        } catch {
-          // ignore fs errors if edge runtime
-        }
-
-        if (!studioImageUrl) {
-          studioImageUrl = generateStudioSvgComposite({
-            dataUrl: rawDataUrl,
-            polygon: poly,
-            box_2d: box,
-            preferredBackground: params.preferredBackground
-          });
-        }
+        const studioImageUrl = rawDataUrl;
 
         return {
           success: true,
